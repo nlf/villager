@@ -147,7 +147,6 @@ exports.update = {
     auth: 'session',
     handler: function (request, reply) {
         var form = request.payload;
-        console.log('form is', form);
         models.User.update(request.params.person, {
             fullName  : form.fullName,
             email     : form.email,

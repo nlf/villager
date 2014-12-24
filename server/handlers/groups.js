@@ -15,23 +15,12 @@ exports.list = {
             if (session && session.userid) {
                 var mine = _.where(context.groups[0], { creatorKey: session.userid, approved: false });
                 if(mine.length + approved.length === 0) {
-                    reply.view('noGroups', {
-                        fullName  : session.fullName,
-                        avatar    : session.avatar,
-                        userid    : session.userid,
-                        moderator : session.moderator,
-                        admin     : session.admin
-                    });
+                    reply.view('noGroups', context);
                 }
                 else {
                     reply.view('listGroups', {
-                        groups    : approved,
-                        mine      : mine,
-                        fullName  : session.fullName,
-                        avatar    : session.avatar,
-                        userid    : session.userid,
-                        moderator : session.moderator,
-                        admin     : session.admin
+                        groups: approved,
+                        mine: mine
                     });
                 }
             }
@@ -64,11 +53,8 @@ exports.get = {
                 if (group.creatorKey === session.userid) { thismod = true; }
                 else { thismod = false; }
                 reply.view('group', {
-                    group     : group,
-                    thismod   : thismod,
-                    userid    : session.userid,
-                    moderator : session.moderator,
-                    admin     : session.admin
+                    group: group,
+                    thismod: thismod
                 });
             }
         });
@@ -78,15 +64,9 @@ exports.get = {
 exports.add = {
     auth: 'session',
     handler: function (request, reply) {
-        var session = request.auth.credentials;
         models.GroupCategory.all(function (err, groupCategories) {
             reply.view('addGroup', {
-                userid    : session.userid,
-                fullName  : session.fullName,
-                avatar    : session.avatar,
-                moderator : session.moderator,
-                admin     : session.admin,
-                groupCategories : groupCategories
+                groupCategories: groupCategories
             });
         });
     }
@@ -120,7 +100,6 @@ exports.create = {
 exports.edit = {
     auth: 'session',
     handler: function (request, reply) {
-        var session = request.auth.credentials;
         async.parallel({
             group: function (done) {
                 models.Group.findByIndex('slug', request.params.groupSlug, done);
@@ -130,13 +109,6 @@ exports.edit = {
             }
         }, function (err, context) {
             if (err) { throw err; }
-            context = _.extend(context, {
-                fullName  : session.fullName,
-                avatar    : session.avatar,
-                userid    : session.userid,
-                moderator : session.moderator,
-                admin     : session.admin
-            });
             reply.view('editGroup', context);
         });
     }

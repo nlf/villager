@@ -1,4 +1,5 @@
 module.exports = {
+    addContext: require('./addContext'),
     auth:       require('./auth'),
     pending:    require('./pending'),
     pages:      require('./pages'),

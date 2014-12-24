@@ -26,20 +26,13 @@ exports.list = {
             //else {
             if (session && session.userid) {
                 reply.view('listPlaces', {
-                    places    : context.places[0],
-                    //mine      : mine,
-                    userid    : session.userid,
-                    fullName  : session.fullName,
-                    avatar    : session.avatar,
-                    moderator : session.moderator,
-                    admin     : session.admin
+                    places: context.places[0],
+                    //mine: mine
                 });
             }
 
             else {
-                reply.view('listPlaces', {
-                    places    : context.places[0],
-                });
+                reply.view('listPlaces', { places: context.places[0] });
             }
 
             //}
@@ -61,13 +54,8 @@ exports.get = {
                 if (place.creatorKey === session.userid) { thismod = true; }
                 else { thismod = false; }
                 reply.view('place', {
-                    place     : place,
-                    thismod   : thismod,
-                    fullName  : session.fullName,
-                    avatar    : session.avatar,
-                    userid    : session.userid,
-                    moderator : session.moderator,
-                    admin     : session.admin
+                    place: place,
+                    thismod: thismod
                 });
             }
         });
@@ -77,15 +65,9 @@ exports.get = {
 exports.add = {
     auth: 'session',
     handler: function (request, reply) {
-        var session = request.auth.credentials;
         models.PlaceCategory.all(function (err, placeCategories) {
             reply.view('addPlace', {
-                placeCategories: placeCategories,
-                userid    : session.userid,
-                fullName  : session.fullName,
-                avatar    : session.avatar,
-                moderator : session.moderator,
-                admin     : session.admin
+                placeCategories: placeCategories
             });
         });
     }
@@ -120,7 +102,6 @@ exports.create = {
 exports.edit = {
     auth: 'session',
     handler: function (request, reply) {
-        var session = request.auth.credentials;
         async.parallel({
             place: function (done) {
                 models.Place.findByIndex('slug', request.params.placeSlug, done);
@@ -129,15 +110,7 @@ exports.edit = {
                 models.PlaceCategory.all(done);
             }
         }, function (err, context) {
-            console.log('place is%j', context.place);
             if (err) { throw err; }
-            context = _.extend(context, {
-                userid    : session.userid,
-                fullName  : session.fullName,
-                avatar    : session.avatar,
-                moderator : session.moderator,
-                admin     : session.admin
-            });
             reply.view('editPlace', context);
         });
     }
@@ -210,7 +183,6 @@ exports.star = {
                 place.starredBy.push(session.userid);
             }
             place.save(function () {
-                console.log('place is%j', place);
                 reply().redirect('/places/' + place.slug);
             });
         });

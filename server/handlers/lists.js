@@ -5,7 +5,6 @@ var _ = require('underscore');
 exports.list = {
     auth: { strategy: 'session', mode: 'try' },
     handler: function (request, reply) {
-        var session = request.auth.credentials;
         async.parallel({
             places: function (done) {
                 models.Place.all(done);
@@ -21,15 +20,6 @@ exports.list = {
             }
         }, function (err, context) {
             if (err) { throw err; }
-            if (session && session.userid) {
-                context = _.extend(context, {
-                    userid    : session.userid,
-                    fullName  : session.fullName,
-                    avatar    : session.avatar,
-                    moderator : session.moderator,
-                    admin     : session.admin
-                });
-            }
             reply.view('lists', context);
         });
     }
@@ -53,7 +43,6 @@ exports.add = {
 exports.edit = {
     auth: 'session',
     handler: function (request, reply) {
-        var session = request.auth.credentials;
         async.parallel({
             places: function (done) {
                 models.Place.all(done);
@@ -89,13 +78,6 @@ exports.edit = {
             }
             context.optionKeys = _.pluck(context.listOptions, 'key');
             context.optionsInList = _.pluck(context.list[context.list.what], 'key');
-            context = _.extend(context, {
-                userid    : session.userid,
-                fullName  : session.fullName,
-                avatar    : session.avatar,
-                moderator : session.moderator,
-                admin     : session.admin
-            });
             console.log('context%j', context.optionsInList);
             reply.view('editList', context);
         });
