@@ -56,10 +56,13 @@ server.register(build, function (err) {
 
     if (err) { throw err; }
 
-    server.start(function (err) {
-        if (err) { console.log('error: ', err); }
-        console.log('triciti.es running at:', server.info.uri);
-    });
+    if (!module.parent) {
+        server.start(function (err) {
+            if (err) { console.log('error: ', err); }
+            console.log('villager.io running at:', server.info.uri);
+        });
+    }
+
 });
 
 if (process.env.DEBUG) {
